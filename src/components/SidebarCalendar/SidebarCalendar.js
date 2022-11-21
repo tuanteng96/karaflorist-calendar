@@ -95,6 +95,7 @@ const initialDefault = {
   To: null, //yyyy-MM-dd,
   Status: null,
   UserServiceIDs: null,
+  UserID: 0,
 };
 
 function SidebarCalendar({
@@ -107,7 +108,7 @@ function SidebarCalendar({
   onHideFilter,
   isFilter,
   headerTitle,
-  onOpenModalLock
+  onOpenModalLock,
 }) {
   const [initialValues, setInitialValues] = useState(initialDefault);
   const { CrStockID } = useSelector((state) => state.Auth);
@@ -120,10 +121,11 @@ function SidebarCalendar({
     }
   }, [filters]);
 
-  const loadOptionsStaff = async (inputValue) => {
+  const loadOptionsStaff = async (inputValue, Type) => {
     const filters = {
       key: inputValue,
       StockID: CrStockID,
+      Type: Type,
     };
     const { data } = await CalendarCrud.getStaffs(filters);
     const dataResult = data.data.map((item) => ({
@@ -131,6 +133,13 @@ function SidebarCalendar({
       label: item.text,
       Thumbnail: toUrlServer("/images/user.png"),
     }));
+    if (Type === "LT") {
+      dataResult.unshift({
+        value: "0",
+        label: "Chưa chọn lễ tân",
+        Thumbnail: toUrlServer("/images/user.png"),
+      });
+    }
     return {
       options: dataResult,
       hasMore: false,
@@ -278,11 +287,41 @@ function SidebarCalendar({
                           Option: CustomOptionStaff,
                           Control,
                         }}
-                        loadOptions={loadOptionsStaff}
+                        loadOptions={(inputValue) =>
+                          loadOptionsStaff(inputValue, "DV")
+                        }
                         noOptionsMessage={({ inputValue }) =>
                           !inputValue
                             ? "Không có nhân viên"
                             : "Không tìm thấy nhân viên"
+                        }
+                      />
+                      <AsyncPaginate
+                        classIcon="far fa-user-clock"
+                        menuPlacement="bottom"
+                        //isMulti
+                        className="select-control mb-8px"
+                        classNamePrefix="select"
+                        isClearable
+                        isSearchable
+                        //menuIsOpen={true}
+                        name="UserID"
+                        value={values.UserID}
+                        onChange={(option) => {
+                          setFieldValue("UserID", option, false);
+                        }}
+                        placeholder="Lễ tân"
+                        components={{
+                          Option: CustomOptionStaff,
+                          Control,
+                        }}
+                        loadOptions={(inputValue) =>
+                          loadOptionsStaff(inputValue, "LT")
+                        }
+                        noOptionsMessage={({ inputValue }) =>
+                          !inputValue
+                            ? "Không có lễ tân"
+                            : "Không tìm thấy lễ tân"
                         }
                       />
                     </div>

@@ -115,6 +115,7 @@ function BookingPage() {
         const filters = {
             key: inputValue,
             StockID: stockID,
+            Type: "DV"
         };
         setTimeout(async () => {
             const { data } = await CalendarCrud.getStaffs(filters);

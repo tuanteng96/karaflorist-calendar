@@ -98,6 +98,7 @@ function CalendarPage(props) {
       "DANG_THUC_HIEN",
       "THUC_HIEN_XONG",
     ],
+    UserID: '',
   });
   const [initialValue, setInitialValue] = useState({});
   const [Events, setEvents] = useState([]);
@@ -128,6 +129,7 @@ function CalendarPage(props) {
       const { data } = await CalendarCrud.getStaffs({
         StockID: AuthCrStockID,
         All: true,
+        Type: "DV"
       });
       const newData =
         Array.isArray(data.data) && data.data.length > 0
@@ -459,7 +461,7 @@ function CalendarPage(props) {
               ? values.UserServiceIDs.map((item) => item.value).toString()
               : "",
           BookDate: moment(values.BookDate).format("YYYY-MM-DD HH:mm"),
-          Status: "TU_CHOI",
+          Status: "TU_CHOI"
         },
       ],
     };
@@ -511,6 +513,7 @@ function CalendarPage(props) {
 
   const getBooking = (fn) => {
     !loading && setLoading(true);
+    
     const newFilters = {
       ...filters,
       MemberID:
@@ -530,6 +533,10 @@ function CalendarPage(props) {
       StatusMember: filters?.StatusMember ? filters?.StatusMember.value : "",
       StatusBook: filters?.StatusBook ? filters?.StatusBook.value : "",
       StatusAtHome: filters?.StatusAtHome ? filters?.StatusAtHome.value : "",
+      UserID:
+        filters.UserID && typeof filters.UserID === "object"
+          ? filters.UserID?.value
+          : filters.UserID,
     };
 
     CalendarCrud.getBooking(newFilters)
