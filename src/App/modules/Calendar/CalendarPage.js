@@ -103,7 +103,7 @@ function CalendarPage(props) {
   const [initialValue, setInitialValue] = useState({});
   const [Events, setEvents] = useState([]);
   const [StaffFull, setStaffFull] = useState([]);
-  const [initialView, setInitialView] = useState("timeGridWeek");
+  const [initialView, setInitialView] = useState("timeGridDay");
   const [headerTitle, setHeaderTitle] = useState("");
   const [StaffOffline, setStaffOffline] = useState([]);
   const [isModalLock, setIsModalLock] = useState(false);
