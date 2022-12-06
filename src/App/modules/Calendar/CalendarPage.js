@@ -98,7 +98,7 @@ function CalendarPage(props) {
       "DANG_THUC_HIEN",
       "THUC_HIEN_XONG",
     ],
-    UserID: '',
+    UserID: "",
   });
   const [initialValue, setInitialValue] = useState({});
   const [Events, setEvents] = useState([]);
@@ -129,7 +129,7 @@ function CalendarPage(props) {
       const { data } = await CalendarCrud.getStaffs({
         StockID: AuthCrStockID,
         All: true,
-        Type: "DV"
+        Type: "DV",
       });
       const newData =
         Array.isArray(data.data) && data.data.length > 0
@@ -461,7 +461,7 @@ function CalendarPage(props) {
               ? values.UserServiceIDs.map((item) => item.value).toString()
               : "",
           BookDate: moment(values.BookDate).format("YYYY-MM-DD HH:mm"),
-          Status: "TU_CHOI"
+          Status: "TU_CHOI",
         },
       ],
     };
@@ -513,7 +513,7 @@ function CalendarPage(props) {
 
   const getBooking = (fn) => {
     !loading && setLoading(true);
-    
+
     const newFilters = {
       ...filters,
       MemberID:
@@ -637,6 +637,14 @@ function CalendarPage(props) {
   const onHideModalLock = () => {
     setIsModalLock(false);
     setBtnLoadingLock(false);
+  };
+
+  const formatVND = (price) => {
+    if (!price || price === 0) {
+      return "0";
+    } else {
+      return price.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1.");
+    }
   };
 
   // const someMethod = () => {
@@ -856,6 +864,7 @@ function CalendarPage(props) {
               eventContent={(arg) => {
                 const { event, view } = arg;
                 const { extendedProps } = event._def;
+                console.log(extendedProps);
                 let italicEl = document.createElement("div");
                 italicEl.classList.add("fc-content");
                 if (
@@ -877,10 +886,21 @@ function CalendarPage(props) {
                       <div class="w-35px">${moment(
                         extendedProps.BookDate
                       ).format("HH:mm")} </div>
-                      <div class="flex-1 text-truncate">- ${extendedProps.RootMinutes ??
-                        extendedProps?.os?.RootMinutes ??
-                        60}p - ${extendedProps.RootTitles}</div>
+                      <div class="flex-1 text-truncate">- ${
+                        extendedProps?.os?.CostMerthod === 1
+                          ? formatVND(extendedProps?.os?.Cost1)
+                          : ""
+                      }${
+                      extendedProps?.os?.CostMerthod === 2
+                        ? formatVND(extendedProps?.os?.Cost2)
+                        : ""
+                    }${
+                      extendedProps?.os?.CostMerthod === 3
+                        ? formatVND(extendedProps?.os?.Cost3)
+                        : ""
+                    } - ${extendedProps.RootTitles}</div>
                     </div>
+                    <div>Nhân viên : ${extendedProps?.os?.UserFullname || "Không có"}</div>
                   </div>`;
                   } else {
                     italicEl.innerHTML = `<div class="fc-title">
@@ -895,6 +915,8 @@ function CalendarPage(props) {
                     }</span><span> - ${extendedProps.RootMinutes ??
                       extendedProps?.os?.RootMinutes ??
                       60}p - ${extendedProps.RootTitles}</span></div>
+                      <div>Nhân viên : ${extendedProps?.os?.UserFullname ||
+                        "Không có"}</div>
                   </div>`;
                   }
                 } else {
